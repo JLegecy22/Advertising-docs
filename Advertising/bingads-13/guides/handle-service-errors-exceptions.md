@@ -15,6 +15,8 @@ This article describes details on error handling and troubleshooting your applic
 ## <a name="commonerrors"></a>Common Errors
 Here are some tips to handle common errors that you may encounter. 
 
+### <a name="common-api-errors"></a>Common API Errors
+
 ### Code 105
 Typically indicates usage of an incorrect access token (AuthenticationToken header element) or developer token for the target environment. For example your credentials may be valid in production; however, when targeting sandbox you would observe code *105*.
 
@@ -42,18 +44,79 @@ This is not in and of itself representative of an actionable code, and you shoul
 You cannot create an instance of a base class such as [Ad](../campaign-management-service/ad.md). You must instantiate one of the derived classes e.g., [ExpandedTextAd](../campaign-management-service/expandedtextad.md).
 
 ### Why am I getting an empty URL from the Reporting API call? 
-Even when the report [Status](../reporting-service/reportrequeststatus.md#status) is set to Success, the [ReportDownloadUrl](../reporting-service/reportrequeststatus.md#reportdownloadurl) element can be nil if no data is available for the submitted report parameters. If you see performance data in the Microsoft Advertising web application for the same date range and filter criteria, please [contact support](#contact-support) with details.
+Even when the report [Status](../reporting-service/reportrequeststatus.md#status) is set to Success, the [ReportDownloadUrl](../reporting-service/reportrequeststatus.md#reportdownloadurl) element can be nil if no data is available for the submitted report parameters. If you see performance data in the Microsoft Advertising web application for the same date range and filter criteria, please [contact support](#contact-support) with details.  
+
+### <a name="common-oauth-errors"></a>Common OAuth Errors
+
+### Invalid redirect URI
+An invalid redirect URI error indicates that you are requesting either user consent or access tokens with a redirect_uri value that is not properly registered.  
+
+An error could be returned as text in the browser window when you are requesting user consent as follows.
+
+*invalid_request: The provided value for the input parameter 'redirect_uri' is not valid. The expected value is a URI which matches a redirect URI registered for this client application.*
+
+An error could be returned as a JSON string when requesting access tokens with the [Microsoft identity platform endpoint](authentication-oauth-identity-platform.md) as follows. 
+
+```json
+{"error":"invalid_client","error_description":"AADSTS50011: The reply url specified in the request
+does not match the reply urls configured for the application: 'foo'.\r\nTrace ID:
+x\r\nCorrelation ID: x\r\nTimestamp: 2019-05-10
+17:18:23Z","error_codes":[50011],"timestamp":"2019-05-10
+17:18:23Z","trace_id":"x","correlation_id":"x"}
+```
+
+An error could be returned as a JSON string when requesting access tokens with the [Live Connect endpoint](authentication-oauth-live-connect.md) as follows. 
+
+```json
+{"error":"invalid_grant","error_description":"The provided value for the 'redirect_uri' is not
+valid. The value must exactly match the redirect URI used to obtain the authorization code."}
+```
+
+### Invalid grant
+
+The invalid_grant error could be returned if the refresh token expired, the user changed their password, or the token was otherwise revoked.  
+
+```json
+{"error":"invalid_grant","error_description":"The user could not be authenticated or the grant is expired. The user must first sign in and if needed grant the client application access to the requested scope."}
+```
+
+At any time without prior warning Microsoft may determine that user consent should again be granted; however, some scenarios are within your control. Clients running apps on services that span regions and devices such as Microsoft Azure should register a web application with client secret. You can get a refresh token on one device and refresh it on another so long as you have the same client ID and client secret. If you register a public application without a client secret, then you cannot use a refresh token across devices. A confidential token is bound to the client secret. If you had used a public client application ID without client secret to get a refresh token in the US and then later try to refresh the token in the EU region you would observe the invalid_grant error. 
+
+### Application not found or unauthorized client
+
+If you observe an error such as "unauthorized_client: The client does not exist" or "Application with identifier 'foo' was not found in the directory 'bar'", ensure that the application still exists for the correct target environment i.e., production or sandbox. 
+
+An application not found error could also be returned if you are calling the [Microsoft identity platform endpoint](authentication-oauth-identity-platform.md) using a Live SDK application ID with the short hexadecimal format e.g., 0000000012345A67. In that case you must register a new application. Valid Microsoft identity platform application IDs are formatted as a GUID with dashes e.g., ab01c23d-4e56-7f8a-90bc-1d23efabc45d. 
+
+### Application not configured as a multi-tenant application
+
+Application 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxxx' is not configured as a multi-tenant application. Usage of the /common endpoint is not supported for such applications created after '10/15/2018'. Use a tenant-specific endpoint or configure the application to be multi-tenant.
+
+If you registered the app in the Azure portal, in the Supported account types section select "Accounts in any organizational directory and personal Microsoft accounts". (Please see step 3 here.)  
 
 ## <a name="contact-support"></a>Contact Support
-To get help with issues that you cannot resolve, consider posting in the [API Developer](https://social.msdn.microsoft.com/forums/en-us/home?forum=BingAds) forum where an active Microsoft Advertising product team or member of the developer community will try and help. If you do not find timely information via the developer forum, or if the investigation involves sensitive account or personal details, please contact [Microsoft Advertising Support](https://about.ads.microsoft.com/en-us/microsoft-advertising-support).
+To get help with issues that you cannot resolve, consider posting in the [API Developer](https://social.msdn.microsoft.com/forums/en-us/home?forum=BingAds) forum where a member of the Microsoft Advertising product team or a volunteer in the developer community will try and help. If the investigation involves sensitive account or personal details, please contact [Microsoft Advertising Support](https://about.ads.microsoft.com/en-us/microsoft-advertising-support).
 
-> [!TIP]
-> To resolve the issue efficiently, please provide support with the following information up front.
->  - **Reproduction Steps:** Include all header and body elements of the SOAP request, except for the *AuthenticationToken* or *Password* header elements.
->  - **Issue or Error:** Include the complete SOAP response with tracking ID, and please also note the date and time when the error occurred.
->  - **Historical Performance:** Indicate whether the same request had worked for you in the past.
->  - **Frequency:** Indicate whether you can now reproduce the issue every time or intermittently.
->  - **Environment:** Indicate whether the issue occurs in the production or sandbox environment.
+Please provide support with details to expedite the investigation.
+
+ - Who is the user attempting to call the service e.g., what is the login email address? 
+ - What is the account ID or account number the user is trying to access? 
+ - Provide the steps needed to reproduce the error. Include the full request and response, except for private credentials e.g., access token and client secret.  
+ - Are you targeting the production or sandbox environment? Ensure that you are using the correct app registration and authorization endpoints as [documented here](sandbox.md#access) for production vs sandbox. Likewise be sure to use the correct [web service addresses](web-service-addresses.md) for the same environment.  
+ - Indicate whether the same request had worked for you in the past i.e., historical performance.  
+ - Indicate whether you can now reproduce the issue every time or intermittently.  
+
+For help with calls to the Bing Ads API [services](web-service-addresses.md), if have already checked the [FAQ](faq.md) and [Common API Errors](#common-api-errors) please also provide these details. 
+
+ - Please be sure to include the timestamp and tracking ID from the SOAP response. 
+ - For issues related to the Bulk or Reporting service please include the trace for both the request and status poll operations.  
+ - For an issue related to error code 105 or 106, please also include the system identifier for the Microsoft Advertising user's login credentials. To get the user identifier for the current user, please see the [Quick Start](get-started.md#quick-start) guide.  
+
+For help with calls to the [Live Connect](authentication-oauth-live-connect.md) or [Microsoft identity platform](authentication-oauth-identity-platform.md) endpoints, if have already checked the [FAQ](faq.md) and [Common OAuth Errors](#common-oauth-errors) please also provide these details. 
+
+ - Have you registered a native or web application? Clients running apps on services that span regions and devices such as Microsoft Azure should register a web application with client secret.  
+ - What is your registered application ID (client_id)? If you also have an application secret (client_secret) please confirm that you are setting it when you request access tokens from the authorization endpoint, but do not share it with anyone. 
+ - Can you successfully obtain an access token and complete the documented [Quick Start](get-started.md#quick-start) for production or sandbox? If not, where does authentication fail and what is the error?  
 
 ## <a name="faultoverview"></a>Fault Model Overview
 When a Bing Ads API service operation fails, it will return a service fault e.g., the Customer Management service can return [ApiFault](../customer-management-service/apifault.md). The fault exceptions include one or more error objects. The error objects contain the details of why the service operation failed and a code that uniquely identifies the error. For a list of error codes, see [Bing Ads API Operation Error Codes](operation-error-codes.md).
