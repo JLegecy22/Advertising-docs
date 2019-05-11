@@ -106,14 +106,16 @@ Please provide support with details to expedite the investigation.
  - Indicate whether the same request had worked for you in the past i.e., historical performance.  
  - Indicate whether you can now reproduce the issue every time or intermittently.  
 
-For help with calls to the Bing Ads API [services](web-service-addresses.md), if have already checked the [FAQ](faq.md) and [Common API Errors](#common-api-errors) please also provide these details. 
+For help with calls to the Bing Ads API [services](web-service-addresses.md), please also provide these details to the [support team](https://about.ads.microsoft.com/en-us/microsoft-advertising-support). 
 
+ - Have you  have already checked the [FAQ](faq.md) and [Common API Errors](#common-api-errors)?  
  - Please be sure to include the timestamp and tracking ID from the SOAP response. 
  - For issues related to the Bulk or Reporting service please include the trace for both the request and status poll operations.  
  - For an issue related to error code 105 or 106, please also include the system identifier for the Microsoft Advertising user's login credentials. To get the user identifier for the current user, please see the [Quick Start](get-started.md#quick-start) guide.  
 
-For help with calls to the [Live Connect](authentication-oauth-live-connect.md) or [Microsoft identity platform](authentication-oauth-identity-platform.md) endpoints, if have already checked the [FAQ](faq.md) and [Common OAuth Errors](#common-oauth-errors) please also provide these details. 
+For help with calls to the [Live Connect](authentication-oauth-live-connect.md) or [Microsoft identity platform](authentication-oauth-identity-platform.md) endpoints, please also provide these details to the [support team](https://about.ads.microsoft.com/en-us/microsoft-advertising-support). 
 
+ - Have you  have already checked the [FAQ](faq.md) and [Common OAuth Errors](#common-oauth-errors)?  
  - Have you registered a native or web application? Clients running apps on services that span regions and devices such as Microsoft Azure should register a web application with client secret.  
  - What is your registered application ID (client_id)? If you also have an application secret (client_secret) please confirm that you are setting it when you request access tokens from the authorization endpoint, but do not share it with anyone. 
  - Can you successfully obtain an access token and complete the documented [Quick Start](get-started.md#quick-start) for production or sandbox? If not, where does authentication fail and what is the error?  
