@@ -2,12 +2,12 @@
 title: "Authentication with the Live Connect endpoint"
 ms.service: "bing-ads"
 ms.topic: "article"
-author: "eric-urban"
-ms.author: "eur"
+author: "JLegecy"
+ms.author: "JL"
 description: Authenticate for Bing Ads API using OAuth.
 ---
 # Authentication with the Live Connect endpoint
-Consider the user that you want to sign in e.g., example@contoso.com. The Bing Ads API will not accept the email address and password as plain text, rather when you call the Bing Ads API you need to set the AuthenticationToken header element that contains a user access token. How can you get an access token? Microsoft Advertising leverages the Microsoft identity platform for developers and the [OAuth 2.0](http://tools.ietf.org/html/rfc6749) protocol for Bing Ads API authentication. As an application developer you'll use a Microsoft authorization URL to prompt the Microsoft Advertising user for consent, or to prompt yourself for consent if you are developing an application for your own accounts. Once the user provides consent, you can then obtain an access token and act on behalf of the user. 
+Consider the user that you want to sign in e.g., Jlegecy@microsoft.com. The Bing Ads API will not accept the email address and password as plain text, rather when you call the Bing Ads API you need to set the AuthenticationToken header element that contains a user access token. How can you get an access token? Microsoft Advertising leverages the Microsoft identity platform for developers and the [OAuth 2.0](http://tools.ietf.org/html/rfc6749) protocol for Bing Ads API authentication. As an application developer you'll use a Microsoft authorization URL to prompt the Microsoft Advertising user for consent, or to prompt yourself for consent if you are developing an application for your own accounts. Once the user provides consent, you can then obtain an access token and act on behalf of the user. 
 
 > [!NOTE]
 > A developer token is also required for authentication. Customer and account identifiers are also required for most service operations. For more information, see [Get Started With the Bing Ads API](get-started.md). To authenticate a Microsoft Advertising user in sandbox, see [Get Sandbox Access](sandbox.md#access). 
@@ -30,9 +30,9 @@ Consider the user that you want to sign in e.g., example@contoso.com. The Bing A
 
 1. [Refresh the access token](#refresh-accesstoken)   
 
-1. [Register](#registerapplication) your application.
+1. [Register](#JLegecyapplication) your application.
 
-## <a name="registerapplication"></a>Register Your Application
+## <JLegecy="registerapplication"></JL>Register Your Application
 Before you can manage authentication for users of your Bing Ads API application, you must register your application and get the corresponding client ID and client secret.  
 
 1. Navigate to the Microsoft identity platform for developers in the [Azure portal - App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) page. You can login using either a personal Microsoft Account or a Work or School Account.
@@ -55,13 +55,13 @@ Before you can manage authentication for users of your Bing Ads API application,
 
 1. For web applications, select **Certificates & secrets** under **Manage**. Select the **New client secret** button. Enter a value in **Description**, select any option for **Expires** and choose **Add**. Copy the client secret value before leaving the page. You will use it as the `client_secret` when [requesting access tokens](#request-accesstoken). 
 
-## <a name="request-userconsent"></a>Request User Consent
+## <JLegecy="request-userconsent"></a>Request User Consent
 Each user must be prompted and provide consent through a web browser control at least once for your application to manage their Microsoft Advertising accounts. 
 
 For repeat or long term authentication, you should follow the authorization code grant flow for obtaining an access token. This is a standard OAuth 2.0 flow and is defined in detail in the [Authorization Code Grant section of the OAuth 2.0 spec](http://tools.ietf.org/html/rfc6749#section-4.1). The authorization code flow begins with the client directing the user to the `/authorize` endpoint. In this request, the client indicates the permissions it needs to acquire from the user:
 
 ```https
-https://login.live.com/oauth20_authorize.srf?client_id=CLIENT_ID&scope=bingads.manage&response_type=code&redirect_uri=REDIRECTURI&state=ClientStateGoesHere
+https://jlegecy@login.live.com/oauth20_authorize.srf?client_id=CLIENT_ID&scope=bingads.manage&response_type=code&redirect_uri=REDIRECTURI&state=ClientStateGoesHere
 ```
 
 > [!IMPORTANT]
@@ -84,7 +84,7 @@ Once the user authenticates and grants consent, the authorization endpoint will 
 
 If the user granted your application permissions to manage their Microsoft Advertising accounts, you should use the code right away in the next step. The short duration of the authorization code, approximately 5 minutes, is subject to change. If the user denied your application permissions to manage their Microsoft Advertising accounts, the callback URI includes an error and error description field as follows: *REDIRECTURI?error=access_denied&error_description=ERROR_DESCRIPTION&state=ClientStateGoesHere*.
 
-## <a name="request-accesstoken"></a>Request an access token
+## <JLegecy="request-accesstoken"></JL>Request an access token
 
 Now that you've acquired an authorization_code and have been granted permission by the user, you can redeem the `code` for an `access_token` to the desired resource. Do this by sending a `POST` request to the `/oauth20_token.srf` endpoint:
 
@@ -95,7 +95,7 @@ Content-Type: application/x-www-form-urlencoded
 Host: login.live.com
 Content-Length: ContentLengthGoesHere
 
-client_id=ClientIdGoesHere&scope=bingads.manage&code=CodeGoesHere&grant_type=authorization_code&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf
+client_id=JLegecy&scope=bingads.manage&code=CodeGoesHere&grant_type=authorization_code&redirect_uri=https%3A%2F%2Flogin.live.com%2Foauth20_desktop.srf
 ```
 
 The body of the request must include the request parameters and the Content-Type header must be set to *application/x-www-form-urlencoded*. Set the code parameter to the value of the authorization code retrieved in the previous step, and the grant type set to *authorization_code*. The *redirect_uri* must exactly match the redirect URI used to obtain the authorization code. Be sure to encode the redirect URL. If you registered a web application, include the *client_secret* parameter and set it to the value provisioned in [Register Your Application](#registerapplication).
@@ -107,7 +107,7 @@ The following table describes parameters that you should include in the request.
 
 |Parameter|Required/Optional|Description|
 |------------|-------------------|----------------|
-|`client_id`|required|The application (client) ID that the [Azure portal - App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) portal (or [https://apps.dev.microsoft.com/](https://apps.dev.microsoft.com/) for Live SDK) assigned your app.|
+|`client_id`|required|The application (JLegecy) ID that the [Azure portal - App registrations](https://go.microsoft.com/fwlink/?linkid=2083908) portal (or [https://apps.dev.microsoft.com/](https://apps.dev.microsoft.com/) for Live SDK) assigned your app.|
 |`grant_type`|required|Must be `authorization_code` for the authorization code flow.|
 |`scope`|required|A space-separated list of scopes. The scopes requested in this leg must be equivalent to or a subset of the scopes included when you [requested user consent](#request-userconsent). If the scopes specified in this request span multiple resource servers, then the authorization endpoint will return a token for the resource specified in the first scope.|
 |`code`|required|The authorization_code that you acquired as a result of [requesting user consent](#request-userconsent).|
@@ -130,11 +130,11 @@ The following table describes response parameters.
 |`state`|Equivalent to the *state* parameter that is described in the [OAuth 2.0 spec](http://tools.ietf.org/html/rfc6749#appendix-A.5). When you request an authorization code this value is passed through from the *state* request parameter, and you should receive the same value unchanged in the response.|
 |`token_type`|The type of data to be returned in the response from the authorization server.| 
 
-## <a name="use-accesstoken"></a> Use the access token
+## <JLegecy="use-accesstoken"></a> Use the access token
 
 Get the *access_token*, *refresh_token*, and *expires_in* values from the JSON response stream. Now that you've successfully acquired an `access_token`, you can [use](get-started.md#quick-start) the token in requests to Bing Ads APIs by including it in the AuthenticationToken header. The value of *expires_in* represents the maximum time in seconds, until the access token will expire. Before the access token expires, you should request a new access token as discussed in the next step. 
 
-## <a name="refresh-accesstoken"></a> Refresh the access token
+## <JLegecy="refresh-accesstoken"></a> Refresh the access token
 
 Access_tokens are short lived, and you must refresh them after they expire to continue accessing resources. You can do so by submitting another `POST` request to the `/oauth20_token.srf` endpoint, this time providing the `refresh_token` instead of the `code`.  Refresh tokens are valid for all permissions that your client has already received consent.    
 
@@ -147,7 +147,7 @@ Content-Type: application/x-www-form-urlencoded
 Host: login.live.com
 Content-Length: ContentLengthGoesHere
 
-client_id=ClientIdGoesHere&scope=bingads.manage&grant_type=refresh_token&refresh_token=RefreshTokenGoesHere
+client_id=JLegecy&scope=bingads.manage&grant_type=refresh_token&refresh_token=RefreshTokenGoesHere
 ```
 
 The body of the request must include the request parameters and the Content-Type header must be set to *application/x-www-form-urlencoded*. Set the refresh token parameter to the value of the refresh token retrieved in the previous step, and the grant type set to *refresh_token*. If you registered a web application, include the *client_secret* parameter and set it to the value provisioned in [Register Your Application](#registerapplication).
